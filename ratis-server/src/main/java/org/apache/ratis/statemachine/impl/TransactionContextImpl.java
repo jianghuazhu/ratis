@@ -179,8 +179,9 @@ public class TransactionContextImpl implements TransactionContext {
     Preconditions.assertNull(logEntry, "logEntry");
     Objects.requireNonNull(stateMachineLogEntry, "stateMachineLogEntry == null");
 
+    setLogEntry(LogProtoUtils.toLogEntryProto(stateMachineLogEntry, term, index));
     logIndexFuture.complete(index);
-    return setLogEntry(LogProtoUtils.toLogEntryProto(stateMachineLogEntry, term, index));
+    return this.logEntry;
   }
 
   public CompletableFuture<Long> getLogIndexFuture() {
