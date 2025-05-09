@@ -239,10 +239,12 @@ public interface RaftServerConfigKeys {
 
     String LEADER_LEASE_TIMEOUT_RATIO_KEY = PREFIX + ".leader.lease.timeout.ratio";
     double LEADER_LEASE_TIMEOUT_RATIO_DEFAULT = 0.9;
+    double LEADER_LEASE_TIMEOUT_RATIO_MIN_DEFAULT = 0.0;
+    double LEADER_LEASE_TIMEOUT_RATIO_MAX_DEFAULT = 1.0;
     static double leaderLeaseTimeoutRatio(RaftProperties properties) {
       return getDouble(properties::getDouble, LEADER_LEASE_TIMEOUT_RATIO_KEY,
           LEADER_LEASE_TIMEOUT_RATIO_DEFAULT, getDefaultLog(),
-          requireMin(0.0), requireMax(1.0));
+          requireMin(LEADER_LEASE_TIMEOUT_RATIO_MIN_DEFAULT), requireMax(LEADER_LEASE_TIMEOUT_RATIO_MAX_DEFAULT));
     }
 
     static void setLeaderLeaseTimeoutRatio(RaftProperties properties, double ratio) {

@@ -33,6 +33,9 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static org.apache.ratis.server.RaftServerConfigKeys.Read.LEADER_LEASE_TIMEOUT_RATIO_MIN_DEFAULT;
+import static org.apache.ratis.server.RaftServerConfigKeys.Read.LEADER_LEASE_TIMEOUT_RATIO_MAX_DEFAULT;
+
 class LeaderLease {
 
   private final AtomicBoolean enabled;
@@ -42,8 +45,10 @@ class LeaderLease {
   LeaderLease(RaftProperties properties) {
     this.enabled = new AtomicBoolean(RaftServerConfigKeys.Read.leaderLeaseEnabled(properties));
     final double leaseRatio = RaftServerConfigKeys.Read.leaderLeaseTimeoutRatio(properties);
-    Preconditions.assertTrue(leaseRatio > 0.0 && leaseRatio <= 1.0,
-        "leader ratio should sit in (0,1], now is " + leaseRatio);
+    Preconditions.assertTrue(leaseRatio > LEADER_LEASE_TIMEOUT_RATIO_MIN_DEFAULT &&
+        leaseRatio <= LEADER_LEASE_TIMEOUT_RATIO_MAX_DEFAULT,
+        "leader ratio should sit in (" + LEADER_LEASE_TIMEOUT_RATIO_MIN_DEFAULT + ", " +
+        LEADER_LEASE_TIMEOUT_RATIO_MAX_DEFAULT + "], now is " + leaseRatio);
     this.leaseTimeoutMs = RaftServerConfigKeys.Rpc.timeoutMin(properties)
         .multiply(leaseRatio)
         .toIntExact(TimeUnit.MILLISECONDS);
