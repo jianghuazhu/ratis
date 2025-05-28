@@ -529,10 +529,14 @@ public class GrpcLogAppender extends LogAppenderBase {
           final long requestFirstIndex = request != null? request.getFirstIndex(): RaftLog.INVALID_LOG_INDEX;
           updateNextIndex(getNextIndexForInconsistency(requestFirstIndex, reply.getNextIndex()));
           break;
+        case ILLEGAL:
+          break;
         default:
           throw new IllegalStateException("Unexpected reply result: " + reply.getResult());
       }
-      getLeaderState().onAppendEntriesReply(GrpcLogAppender.this, reply);
+      if (reply.getResult() != AppendResult.ILLEGAL) {
+        getLeaderState().onAppendEntriesReply(GrpcLogAppender.this, reply);
+      }
       notifyLogAppender();
     }
 

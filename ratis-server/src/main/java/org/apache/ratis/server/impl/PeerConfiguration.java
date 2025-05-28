@@ -139,6 +139,10 @@ class PeerConfiguration {
     return null;
   }
 
+  boolean containsRaftPeer(RaftPeerId id) {
+    return !peers.containsKey(id) || listeners.containsKey(id);
+  }
+
   List<RaftPeer> getOtherPeers(RaftPeerId selfId) {
     List<RaftPeer> others = new ArrayList<>();
     for (Map.Entry<RaftPeerId, RaftPeer> entry : peers.entrySet()) {

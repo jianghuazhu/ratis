@@ -1551,6 +1551,20 @@ class RaftServerImpl implements RaftServer.Division,
     logAppendEntries(isHeartbeat, () -> getMemberId() + ": appendEntries* "
         + toAppendEntriesRequestString(proto, stateMachine::toStateMachineLogEntryString));
 
+    // Verify whether RaftPeer exists in the current configuration.
+    if (isHeartbeat) {
+      RaftConfigurationImpl conf = getRaftConf();
+      boolean flg = conf.containsPeer(leaderId);
+      if (!flg) {
+        AppendEntriesReplyProto reply = toAppendEntriesReplyProto(
+            leaderId, getMemberId(), state.getCurrentTerm(), state.getLog().getLastCommittedIndex(),
+            state.getNextIndex(), AppendResult.ILLEGAL, callId, RaftLog.INVALID_LOG_INDEX, true);
+        logAppendEntries(true, () -> getMemberId()
+            + "An illegal intruder. " + toAppendEntriesReplyString(reply));
+        return CompletableFuture.completedFuture(reply);
+      }
+    }
+
     final long leaderTerm = proto.getLeaderTerm();
     final long currentTerm;
     final long followerCommit = state.getLog().getLastCommittedIndex();

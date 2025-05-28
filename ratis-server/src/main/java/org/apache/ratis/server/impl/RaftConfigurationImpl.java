@@ -159,6 +159,10 @@ final class RaftConfigurationImpl implements RaftConfiguration {
     }
   }
 
+  boolean containsPeer(RaftPeerId id) {
+    return conf.containsRaftPeer(id);
+  }
+
   PeerConfiguration getConf() {
     return conf;
   }

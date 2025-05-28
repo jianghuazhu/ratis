@@ -194,6 +194,7 @@ message AppendEntriesReplyProto {
     NOT_LEADER = 1; // the requester's term is not large enough
     INCONSISTENCY = 2; // gap between the local log and the entries or snapshot installation in progress or
                        // overlap between local snapshot and the entries
+    ILLEGAL = 3; // the Follower received an append request outside the configuration
   }
 
   RaftRpcReplyProto serverReply = 1;
